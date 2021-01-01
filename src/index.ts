@@ -1,5 +1,4 @@
-import { MessageEmbed } from "discord.js";
 import dotenv from "dotenv";
 dotenv.config();
-import { init } from "./kakao"
-init()
+import { init as kakaoReceiver } from "./kakao"
+kakaoReceiver()
