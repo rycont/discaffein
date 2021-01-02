@@ -10,5 +10,5 @@ export const init = () => {
     login();
     kakao.addListener('message', async (kakaoChat: KakaoTypes.Chat) => {
         forwardToDiscord(kakaoChat)
-      })
+    })
 }

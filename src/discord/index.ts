@@ -1,5 +1,6 @@
 import { Guild, TextChannel } from "discord.js";
 import discord from "../storages/discord";
+import forwardToKakao from "./forwardToKakao";
 import login from "./login";
 
 login();
@@ -27,6 +28,11 @@ export const ensureChannel = async (name: string) => {
     const newChannel = await getMainGuild().channels.create(name)
     return newChannel
 }
+
+discord.on('message', (discordChat) => {
+    if(discordChat.author.id === discord.user?.id) return
+    forwardToKakao(discordChat)
+})
 
 export {
     discord

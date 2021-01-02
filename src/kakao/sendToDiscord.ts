@@ -14,7 +14,7 @@ const forwardToDiscord = async (kakaoChat: Chat) => {
         },
         description: kakaoChat.Text
     }))
-    if(kakaoChat.RawAttachment) {
+    if(kakaoChat.RawAttachment?.url) {
         discordChannel.send("아마도 음성메시지같습니다 :)", {
             files: [kakaoChat.RawAttachment.url]
         })
