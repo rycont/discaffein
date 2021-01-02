@@ -18,11 +18,12 @@ export const getMainGuild = () => {
 }
 
 export const findChannelByName = (name: string) => {
-    return getMainGuild().channels.cache.find((channel) => channel.name.split('-').join('_') === name.split(' ').join('_'))
+    return getMainGuild().channels.cache.find((channel) => channel.name.split('-').join('_') === name.split(' ').join('_').split('-').join('_'))
 }
 
 export const ensureChannel = async (name: string) => {
     const exist = findChannelByName(name) as TextChannel
+    console.log(exist)
     if(exist) return exist
     
     const newChannel = await getMainGuild().channels.create(name)
