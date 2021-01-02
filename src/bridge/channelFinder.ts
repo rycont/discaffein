@@ -9,13 +9,12 @@ interface ChannelBridge {
     discordid: string;
 }
 export const findChannelByName = (name: string) => {
-    return getMainGuild().channels.cache.find((channel) => channel.name.split('-').join('_') === name.split(' ').join('_').split('-').join('_'))
+    return getMainGuild().channels.cache.find((channel) => channel.name === name)
 }
 let discordMainguild: Guild
 
 export const getMainGuild = () => {
     if(discordMainguild) return discordMainguild
-
     const cachedGuilds = discord.guilds.cache
     const guild = cachedGuilds.get(cachedGuilds.keyArray()[0])
     if(!guild) throw new Error("봇이 어느 서버에도 소속되어있지 않습니다")
