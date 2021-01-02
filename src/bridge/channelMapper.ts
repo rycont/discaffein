@@ -14,7 +14,6 @@ export const findChannelByName = (name: string) => {
 }
 
 let discordMainguild: Guild
-let discordChatCategory: CategoryChannel
 
 export const getMainGuild = () => {
     if(discordMainguild) return discordMainguild
@@ -34,16 +33,13 @@ export const ensureChannel = async (name: string, config?: GuildCreateChannelOpt
 }
 
 export const ensureCategory = async (name: string) => {
-    if(discordChatCategory) return discordChatCategory
     const premade = getMainGuild().channels.cache.find((channel) => channel.type === 'category' && channel.name === name) as CategoryChannel | undefined
-    if(premade) {
-        discordChatCategory = premade
-        return premade
-    }
+    if(premade) return premade
+    
     const createdCategory = await getMainGuild().channels.create(name, {
         type: 'category'
     })
-    discordChatCategory = createdCategory
+    
     return createdCategory
 }
 
