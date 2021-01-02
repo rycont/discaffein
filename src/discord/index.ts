@@ -18,7 +18,7 @@ export const getMainGuild = () => {
 }
 
 export const findChannelByName = (name: string) => {
-    return getMainGuild().channels.cache.find((channel) => channel.name === name)
+    return getMainGuild().channels.cache.find((channel) => channel.name.split('-').join('_') === name.split(' ').join('_'))
 }
 
 export const ensureChannel = async (name: string) => {
