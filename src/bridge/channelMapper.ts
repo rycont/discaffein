@@ -1,8 +1,9 @@
-import { Guild, TextChannel } from "discord.js";
+import { CategoryChannel, Guild, GuildCreateChannelOptions, TextChannel } from "discord.js";
 import discord from "../storages/discord";
 import { ChatChannel, Long } from "node-kakao";
 import DB from "../db";
 import { kakao } from "../kakao";
+import config from "../storages/config";
 
 interface ChannelBridge {
     kakaoid: string;
@@ -11,7 +12,9 @@ interface ChannelBridge {
 export const findChannelByName = (name: string) => {
     return getMainGuild().channels.cache.find((channel) => channel.name === name)
 }
+
 let discordMainguild: Guild
+let discordChatCategory: CategoryChannel
 
 export const getMainGuild = () => {
     if(discordMainguild) return discordMainguild
@@ -22,12 +25,26 @@ export const getMainGuild = () => {
     return discordMainguild
 }
 
-export const ensureChannel = async (name: string) => {
+export const ensureChannel = async (name: string, config?: GuildCreateChannelOptions) => {
     const exist = findChannelByName(name) as TextChannel
     if(exist) return exist
     
-    const newChannel = await getMainGuild().channels.create(name)
+    const newChannel = await getMainGuild().channels.create(name, config || {})
     return newChannel
+}
+
+export const ensureCategory = async (name: string) => {
+    if(discordChatCategory) return discordChatCategory
+    const premade = getMainGuild().channels.cache.find((channel) => channel.type === 'category' && channel.name === name) as CategoryChannel | undefined
+    if(premade) {
+        discordChatCategory = premade
+        return premade
+    }
+    const createdCategory = await getMainGuild().channels.create(name, {
+        type: 'category'
+    })
+    discordChatCategory = createdCategory
+    return createdCategory
 }
 
 export const k2d = async (kakaoChannel: ChatChannel): Promise<TextChannel> => {
@@ -38,7 +55,11 @@ export const k2d = async (kakaoChannel: ChatChannel): Promise<TextChannel> => {
         const mapped = getMainGuild().channels.cache.get(doc.discordid) as TextChannel
         if(mapped) return mapped
     }
-    const newDiscordChannel = await getMainGuild().channels.create(kakaoChannel.getDisplayName())
+    
+    const newDiscordChannel = await getMainGuild().channels.create(kakaoChannel.getDisplayName(), {
+        parent: await ensureCategory(config.CHAT_CATEGORY_NAME)
+    })
+    // console.log(getChatCategory())
     DB.insert<ChannelBridge>({
         discordid: newDiscordChannel.id,
         kakaoid: kakaoChannel.Id.toString()

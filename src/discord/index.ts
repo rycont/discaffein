@@ -1,7 +1,7 @@
 import { Message } from "discord.js";
 import discord from "../storages/discord";
 import forwardToKakao from "./forwardToKakao";
-import { getOperationChannel } from "./manager";
+import manager, { getOperationChannel } from "./manager";
 
 type Listener = (chat: Message) => void
 
@@ -14,7 +14,10 @@ export const waitForDiscordChat = (): Promise<Message> => new Promise((res, rej)
 
 discord.on('message', (discordChat) => {
     if(discordChat.author.id === discord.user?.id) return
-    if(discordChat.channel.id === getOperationChannel().id) listenQueue.pop()?.(discordChat)
+    if(discordChat.channel.id === getOperationChannel().id) {
+        if(listenQueue.length) return listenQueue.pop()?.(discordChat)
+        return manager(discordChat)
+    }
     forwardToKakao(discordChat)
 })
 

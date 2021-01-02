@@ -1,7 +1,7 @@
 import axios from "axios";
 import { Message, TextChannel } from "discord.js";
 import { ChatType, MediaTemplate, MediaTemplates, PhotoAttachment, SizedMediaItemTemplate } from "node-kakao";
-import * as channelMapper from "../bridge/channelFinder";
+import * as channelMapper from "../bridge/channelMapper";
 
 const getTypeByExtension = (ext: string) => {
     if (["jpg", "jpeg", "gif", "bmp", "png"].includes(ext)) return ChatType.Photo

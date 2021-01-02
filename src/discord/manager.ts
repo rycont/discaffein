@@ -1,5 +1,4 @@
 import { Message, MessageEmbed, TextChannel } from "discord.js"
-import { ensureChannel, getMainGuild } from "../bridge/channelFinder"
 
 let operationChannel: TextChannel
 
@@ -15,6 +14,13 @@ export const sendNotice = async (message: string) => {
     }))
 }
 
-const locoLogin = () => {
+// const createNewChatChannel = () => {
 
+// }
+
+const manager = (message: Message) => {
+    // if(message.content.
+    // console.log()
 }
+
+export default manager

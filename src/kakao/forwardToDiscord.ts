@@ -1,7 +1,7 @@
 import { Chat, ChatType } from "node-kakao";
 import { KakaoAPI } from 'node-kakao/dist/kakao-api'
 import { MessageEmbed } from "discord.js";
-import * as channel from "../bridge/channelFinder";
+import * as channel from "../bridge/channelMapper";
 import deepmerge from "deepmerge";
 
 const forwardToDiscord = async (kakaoChat: Chat) => {
