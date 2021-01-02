@@ -1,7 +1,7 @@
 import axios from "axios";
 import { Message, TextChannel } from "discord.js";
 import { ChatType, MediaTemplate, MediaTemplates, PhotoAttachment, SizedMediaItemTemplate } from "node-kakao";
-import { kakao } from "../kakao";
+import * as channelMapper from "../bridge/channelFinder";
 
 const getTypeByExtension = (ext: string) => {
     if (["jpg", "jpeg", "gif", "bmp", "png"].includes(ext)) return ChatType.Photo
@@ -11,10 +11,9 @@ const getTypeByExtension = (ext: string) => {
     return ChatType.File
 }
 
-const forwardToKakao = (chat: Message) => {
-    const kakaoChannel = (kakao.ChannelManager.getChannelList().find((channel) =>
-        channel.getDisplayName() === (chat.channel as TextChannel).name
-    ))
+const forwardToKakao = async (chat: Message) => {
+    const kakaoChannel = await channelMapper.d2k(chat.channel as TextChannel)
+    console.log(kakaoChannel)
     if (chat.content) kakaoChannel?.sendText(chat.content)
 
     chat.attachments.forEach(async (attach) => {
