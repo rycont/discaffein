@@ -1,11 +1,12 @@
 import { Chat, ChatType } from "node-kakao";
-import { ensureChannel } from "../discord";
 import { KakaoAPI } from 'node-kakao/dist/kakao-api'
 import { MessageEmbed } from "discord.js";
+import * as channel from "../bridge/channelFinder";
 
 const forwardToDiscord = async (kakaoChat: Chat) => {
     const kakaoSender = kakaoChat.Channel.getUserInfo(kakaoChat.Sender)!!
-    const discordChannel = await ensureChannel(kakaoChat.Channel.getDisplayName())
+    const discordChannel = await channel.k2d(kakaoChat.Channel)
+
     console.log(kakaoChat.Channel.getDisplayName())
     discordChannel.send(new MessageEmbed({
         author: {
