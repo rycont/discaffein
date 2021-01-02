@@ -25,7 +25,6 @@ export const getMainGuild = () => {
 
 export const ensureChannel = async (name: string) => {
     const exist = findChannelByName(name) as TextChannel
-    console.log(exist)
     if(exist) return exist
     
     const newChannel = await getMainGuild().channels.create(name)

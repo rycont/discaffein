@@ -7,7 +7,6 @@ const forwardToDiscord = async (kakaoChat: Chat) => {
     const kakaoSender = kakaoChat.Channel.getUserInfo(kakaoChat.Sender)!!
     const discordChannel = await channel.k2d(kakaoChat.Channel)
 
-    console.log(kakaoChat.Channel.getDisplayName())
     discordChannel.send(new MessageEmbed({
         author: {
             name: kakaoSender.Nickname,
@@ -21,7 +20,6 @@ const forwardToDiscord = async (kakaoChat: Chat) => {
         })
     }
     kakaoChat.AttachmentList.forEach((attach) => {
-        console.log(attach.RequiredMessageType, attach.toJsonAttachment())
         if (attach.RequiredMessageType == ChatType.Sticker) {
             return discordChannel.send("", {
                 files: [KakaoAPI.getEmoticonImageURL(attach.toJsonAttachment().path)]

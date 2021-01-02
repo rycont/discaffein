@@ -1,6 +1,7 @@
 import Datastore from 'nedb-promises'
 const DB = new Datastore({
-    filename: '../../dbstore',
+    filename: 'channelmap.db',
     autoload: true
 })
+
 export default DB

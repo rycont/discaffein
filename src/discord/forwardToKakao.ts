@@ -13,7 +13,6 @@ const getTypeByExtension = (ext: string) => {
 
 const forwardToKakao = async (chat: Message) => {
     const kakaoChannel = await channelMapper.d2k(chat.channel as TextChannel)
-    console.log(kakaoChannel)
     if (chat.content) kakaoChannel?.sendText(chat.content)
 
     chat.attachments.forEach(async (attach) => {
