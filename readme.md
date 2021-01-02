@@ -7,6 +7,7 @@
 nodejs, npm이 사전에 설치되어있어야 합니다.
 
 1. 새 서버를 하나 생성하고, 봇을 그 서버에 초대해주세요. 봇은 하나의 서버에만 소속되어있어야 합니다. (권장권한 52240)
+초대 방법 : https://discord.com/oauth2/authorize?scope=bot&permissions=권한&client_id=CLIENT_ID
 2. 이 저장소를 클론하고, npm 의존성을 설치해주세요
 ```bash
 git clone https://github.com/rycont/discaffein
