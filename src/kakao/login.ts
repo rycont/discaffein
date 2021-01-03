@@ -1,6 +1,7 @@
 import { promises as fs } from "fs";
 import { AuthStatusCode } from "node-kakao";
 import { getMainGuild, k2d } from "../bridge/channelMapper";
+import friendMapper from "../bridge/friendMapper";
 import { waitForDiscordChat } from "../discord";
 import config from "../storages/config";
 import kakao from "../storages/kakao";
@@ -86,12 +87,7 @@ const initKakaoService = async () => {
   }
   chatWithDelay('채팅방 목록을 불러왔습니다. 친구목록을 불러오는중입니다.')
   for (const friend of (await kakao.Service.requestFriendList()).friends) {
-    await getMainGuild().roles.create({
-      data: {
-        name: friend.friendNickName || friend.nickName,
-        color: config.USER_ROLE_COLOR
-      }
-    })
+    await friendMapper.k2d(friend)
   }
   chatWithDelay('친구목록을 불러왔습니다.')
 }
