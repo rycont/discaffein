@@ -1,11 +1,10 @@
 import { promises as fs } from "fs";
 import { AuthStatusCode } from "node-kakao";
+import { getMainGuild, k2d } from "../bridge/channelMapper";
 import { waitForDiscordChat } from "../discord";
+import config from "../storages/config";
 import kakao from "../storages/kakao";
-import storage from "../storages/static";
-import { logMessage } from "../utils/console";
-
-const waitRandomSecond = () => new Promise((res) => setTimeout(res, Math.random() * 1800 + 1000))
+import { chatWithDelay } from "../utils/chat";
 
 const saveAutologinToken = async () => {
   await fs.writeFile('./auth.json', JSON.stringify([
@@ -36,11 +35,6 @@ const errorMessageTable =
     [AuthStatusCode.PASSCODE_REQUEST_FAILED]: '인증번호 요청에 실패했습니다.',
     [-910]: '인증이 만료되었습니다. 계정을 다시 등록해주세요.'
   })
-
-const chatWithDelay = async (...message: string[]) => {
-  await waitRandomSecond()
-  await logMessage(message.join(' '))
-}
 
 const passcodeLoop = async (email: string, password: string) => {
   await kakao.Auth.requestPasscode(email, password)
@@ -85,6 +79,23 @@ const kakaoOnboard = async () => {
   await loginLoop()
 }
 
+const initKakaoService = async () => {
+  chatWithDelay('채팅방 목록을 불러오는중입니다')
+  for(const channel of kakao.ChannelManager.getChannelList()) {
+    await k2d(channel)
+  }
+  chatWithDelay('채팅방 목록을 불러왔습니다. 친구목록을 불러오는중입니다.')
+  for (const friend of (await kakao.Service.requestFriendList()).friends) {
+    await getMainGuild().roles.create({
+      data: {
+        name: friend.friendNickName || friend.nickName,
+        color: config.USER_ROLE_COLOR
+      }
+    })
+  }
+  chatWithDelay('친구목록을 불러왔습니다.')
+}
+
 const authBootstrap = async () => {
   try {
     const autologin = await getAutologin()
@@ -92,8 +103,13 @@ const authBootstrap = async () => {
       return await kakaoOnboard()
     }
     await kakao.loginToken(...autologin)
+    await saveAutologinToken()
     await chatWithDelay('카카오계정에 로그인했습니다✌')
-    saveAutologinToken()
+    try {
+      await initKakaoService()
+    } catch(e) {
+      await chatWithDelay('카카오톡 정보를 불러오는데 문제가 발생했어요.')
+    }
   } catch (e) {
     if([AuthStatusCode.DEVICE_NOT_REGISTERED, -910].includes(e.status)) {
       await chatWithDelay('계정 등록이 만료되었어요.')
