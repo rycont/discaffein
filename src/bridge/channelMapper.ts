@@ -5,10 +5,11 @@ import DB from "../db";
 import { kakao } from "../kakao";
 import config from "../storages/config";
 
-interface ChannelBridge {
+export interface Bridge {
     kakaoid: string;
     discordid: string;
 }
+
 export const findChannelByName = (name: string) => {
     return getMainGuild().channels.cache.find((channel) => channel.name === name)
 }
@@ -44,7 +45,7 @@ export const ensureCategory = async (name: string) => {
 }
 
 export const k2d = async (kakaoChannel: ChatChannel): Promise<TextChannel> => {
-    const doc = await DB.findOne<ChannelBridge>({
+    const doc = await DB.findOne<Bridge>({
         kakaoid: kakaoChannel.Id.toString()
     })
     if(doc) {
@@ -56,7 +57,7 @@ export const k2d = async (kakaoChannel: ChatChannel): Promise<TextChannel> => {
         parent: await ensureCategory(config.CHAT_CATEGORY_NAME)
     })
     // console.log(getChatCategory())
-    DB.insert<ChannelBridge>({
+    DB.insert<Bridge>({
         discordid: newDiscordChannel.id,
         kakaoid: kakaoChannel.Id.toString()
     })
@@ -64,7 +65,7 @@ export const k2d = async (kakaoChannel: ChatChannel): Promise<TextChannel> => {
 }
 
 export const d2k = async (discordChannel: TextChannel): Promise<ChatChannel> => {
-    const doc = await DB.findOne<ChannelBridge>({
+    const doc = await DB.findOne<Bridge>({
         discordid: discordChannel.id
     })
     
