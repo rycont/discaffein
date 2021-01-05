@@ -2,6 +2,7 @@ import axios from "axios";
 import { Message, TextChannel } from "discord.js";
 import { ChatType, MediaTemplate, MediaTemplates, PhotoAttachment, SizedMediaItemTemplate } from "node-kakao";
 import * as channelMapper from "../bridge/channelMapper";
+import friendMapper from "../bridge/friendMapper";
 
 const getTypeByExtension = (ext: string) => {
     if (["jpg", "jpeg", "gif", "bmp", "png"].includes(ext)) return ChatType.Photo
@@ -14,6 +15,10 @@ const getTypeByExtension = (ext: string) => {
 const forwardToKakao = async (chat: Message) => {
     const kakaoChannel = await channelMapper.d2k(chat.channel as TextChannel)
     if (chat.content) kakaoChannel?.sendText(chat.content)
+
+    chat.mentions.roles.map(async mention => {
+        console.log(await friendMapper.d2k(mention))
+    })
 
     chat.attachments.forEach(async (attach) => {
         const ext = attach.url.slice(attach.url.lastIndexOf('.') + 1)

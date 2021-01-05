@@ -42,16 +42,21 @@ export default {
             const discordRole = (await getMainGuild()).roles.cache.get(exist.discordid) || await (await getMainGuild()).roles.fetch(exist.discordid)
             if (discordRole) return discordRole
         }
-        const createdRole = await (await getMainGuild()).roles.create({
-            data: {
-                name: userInfo.name,
-                color: config.USER_ROLE_COLOR
-            }
-        })
-        DB.insert<Bridge>({
-            discordid: createdRole.id,
-            kakaoid: userInfo.id.toString()
-        })
-        return createdRole
+        try {
+            console.log('새 역할을 생성합니다 : ', userInfo.name)
+            const createdRole = await (await getMainGuild()).roles.create({
+                data: {
+                    name: userInfo.name,
+                    color: config.USER_ROLE_COLOR
+                }
+            })
+            console.log('Document Inserted,', await DB.insert<Bridge>({
+                discordid: createdRole.id,
+                kakaoid: userInfo.id.toString()
+            }))
+            return createdRole
+        } catch(e) {
+            console.log(e)
+        }
     }
 }

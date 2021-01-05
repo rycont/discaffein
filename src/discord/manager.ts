@@ -1,8 +1,6 @@
 import { Message, MessageEmbed, TextChannel } from "discord.js"
 import { FriendListStruct } from "node-kakao"
-import { discord, waitForDiscordChat } from "."
 import { getMainGuild } from "../bridge/channelMapper"
-import { kakao } from "../kakao"
 import { chatWithDelay, sendEmbed } from "../utils/chat"
 
 let operationChannel: TextChannel
@@ -19,7 +17,7 @@ export const sendNotice = async (message: string) => {
     }))
 }
 
-const clearChannelsAndRoles = async () => {
+export const clearChannelsAndRoles = async () => {
     const { roles, channels } = (await getMainGuild())
     roles.cache.map(async role => {
         try {

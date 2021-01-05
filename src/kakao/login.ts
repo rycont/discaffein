@@ -80,15 +80,17 @@ const kakaoOnboard = async () => {
 }
 
 const initKakaoService = async () => {
-  chatWithDelay('채팅방 목록을 불러오는중입니다')
-  for(const channel of kakao.ChannelManager.getChannelList()) {
+  await chatWithDelay('채팅방 목록을 불러오는중입니다')
+  for (const channel of kakao.ChannelManager.getChannelList()) {
     await k2d(channel)
   }
-  chatWithDelay('채팅방 목록을 불러왔습니다. 친구목록을 불러오는중입니다.')
+  await chatWithDelay('채팅방 목록을 불러왔습니다. 친구목록을 불러오는중입니다.')
+  await chatWithDelay('친구목록을 불러옵니다.')
   for (const friend of (await kakao.Service.requestFriendList()).friends) {
     await friendMapper.k2d(friend)
   }
-  chatWithDelay('친구목록을 불러왔습니다.')
+  // ;friendMapper.k2d((await kakao.Service.requestFriendList()).friends[0])
+  await chatWithDelay('친구목록을 불러왔습니다.')
 }
 
 const authBootstrap = async () => {
