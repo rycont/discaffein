@@ -1,6 +1,7 @@
 import { Message, MessageEmbed, TextChannel } from "discord.js"
 import { FriendListStruct } from "node-kakao"
-import { waitForDiscordChat } from "."
+import { discord, waitForDiscordChat } from "."
+import { getMainGuild } from "../bridge/channelMapper"
 import { kakao } from "../kakao"
 import { chatWithDelay, sendEmbed } from "../utils/chat"
 
@@ -16,6 +17,25 @@ export const sendNotice = async (message: string) => {
             text: "DisCaffein"
         }
     }))
+}
+
+const clearChannelsAndRoles = async () => {
+    const { roles, channels } = (await getMainGuild())
+    roles.cache.map(async role => {
+        try {
+            await role.delete()
+        } catch(e) {
+            console.log(`Cannot delete role ${role.name}`)
+        }
+    })
+    channels.cache.map(async channel => {
+        try {
+            if(channel.type === 'text')
+                await channel.delete()
+        } catch(e) {
+            console.log(`Cannot delete channel ${channel.name}`)
+        }
+    })
 }
 
 const addCreatingGroupMemberLoop = async (cachedFriends?: FriendListStruct) => {
@@ -49,6 +69,9 @@ const manager = (message: Message) => {
     }
     if(operation === '나가기') {
         // chatWithDelay('')
+    }
+    if(operation === 'cleardata') {
+        clearChannelsAndRoles()
     }
 }
 
