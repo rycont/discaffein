@@ -1,9 +1,8 @@
 import { promises as fs } from "fs";
 import { AuthStatusCode } from "node-kakao";
-import { getMainGuild, k2d } from "../bridge/channelMapper";
+import { k2d } from "../bridge/channelMapper";
 import friendMapper from "../bridge/friendMapper";
 import { waitForDiscordChat } from "../discord";
-import config from "../storages/config";
 import kakao from "../storages/kakao";
 import { chatWithDelay } from "../utils/chat";
 

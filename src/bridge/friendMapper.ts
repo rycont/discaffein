@@ -39,10 +39,10 @@ export default {
             kakaoid: userInfo.id.toString()
         })
         if (exist) {
-            const discordRole = getMainGuild().roles.cache.get(exist.discordid) || await getMainGuild().roles.fetch(exist.discordid)
+            const discordRole = (await getMainGuild()).roles.cache.get(exist.discordid) || await (await getMainGuild()).roles.fetch(exist.discordid)
             if (discordRole) return discordRole
         }
-        const createdRole = await getMainGuild().roles.create({
+        const createdRole = await (await getMainGuild()).roles.create({
             data: {
                 name: userInfo.name,
                 color: config.USER_ROLE_COLOR

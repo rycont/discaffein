@@ -11,7 +11,7 @@ const login = async () => {
   try {
     await discord.login(storage.botToken)
     console.log('Logged in to Discord✌')
-    await getMainGuild().fetch()
+    await (await getMainGuild()).fetch()
     setOperationChannel(await ensureChannel(OPERATION_CHANNEL_NAME, {
       parent: await ensureCategory(config.OPERATION_CATEGORY_NAME),
       type: 'text'

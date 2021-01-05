@@ -4,40 +4,40 @@ import { ChatChannel, Long } from "node-kakao";
 import DB from "../db";
 import { kakao } from "../kakao";
 import config from "../storages/config";
+import storage from "../storages/static";
 
 export interface Bridge {
     kakaoid: string;
     discordid: string;
 }
 
-export const findChannelByName = (name: string) => {
-    return getMainGuild().channels.cache.find((channel) => channel.name === name)
+export const findChannelByName = async (name: string) => {
+    return (await getMainGuild()).channels.cache.find((channel) => channel.name === name)
 }
 
 let discordMainguild: Guild
 
-export const getMainGuild = () => {
+export const getMainGuild = async () => {
     if(discordMainguild) return discordMainguild
-    const cachedGuilds = discord.guilds.cache
-    const guild = cachedGuilds.get(cachedGuilds.keyArray()[0])
+    const guild = await discord.guilds.fetch(storage.discordServerId)
     if(!guild) throw new Error("봇이 어느 서버에도 소속되어있지 않습니다")
     discordMainguild = guild
     return discordMainguild
 }
 
 export const ensureChannel = async (name: string, config?: GuildCreateChannelOptions) => {
-    const exist = findChannelByName(name) as TextChannel
+    const exist = await findChannelByName(name) as TextChannel
     if(exist) return exist
     
-    const newChannel = await getMainGuild().channels.create(name, config || {})
+    const newChannel = await (await getMainGuild()).channels.create(name, config || {})
     return newChannel
 }
 
 export const ensureCategory = async (name: string) => {
-    const premade = getMainGuild().channels.cache.find((channel) => channel.type === 'category' && channel.name === name) as CategoryChannel | undefined
+    const premade = (await getMainGuild()).channels.cache.find((channel) => channel.type === 'category' && channel.name === name) as CategoryChannel | undefined
     if(premade) return premade
     
-    const createdCategory = await getMainGuild().channels.create(name, {
+    const createdCategory = await (await getMainGuild()).channels.create(name, {
         type: 'category'
     })
     
@@ -49,11 +49,11 @@ export const k2d = async (kakaoChannel: ChatChannel): Promise<TextChannel> => {
         kakaoid: kakaoChannel.Id.toString()
     })
     if(doc) {
-        const mapped = getMainGuild().channels.cache.get(doc.discordid) as TextChannel
+        const mapped = (await getMainGuild()).channels.cache.get(doc.discordid) as TextChannel
         if(mapped) return mapped
     }
     
-    const newDiscordChannel = await getMainGuild().channels.create(kakaoChannel.getDisplayName(), {
+    const newDiscordChannel = await (await getMainGuild()).channels.create(kakaoChannel.getDisplayName(), {
         parent: await ensureCategory(config.CHAT_CATEGORY_NAME)
     })
     // console.log(getChatCategory())

@@ -7,5 +7,6 @@ const storage = {
   uuid: process.env.uuid || throwKeyNotFoundError("uuid"),
   name: process.env.name || throwKeyNotFoundError("name"),
   botToken: process.env.botToken || throwKeyNotFoundError("botToken"),
+  discordServerId: process.env.discordServerId || throwKeyNotFoundError("discordServerId")
 };
 export default storage;
