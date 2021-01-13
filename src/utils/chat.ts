@@ -11,5 +11,6 @@ export const chatWithDelay = async (...message: string[]) => {
 
 export const sendEmbed = async (delay?: boolean, ...messages: MessageEmbed[]) => {
   delay && await waitRandomSecond()
-  messages.forEach(message => getOperationChannel().send(message))
+  const operationChannel = await getOperationChannel()
+  messages.forEach(async message => operationChannel.send(message))
 }

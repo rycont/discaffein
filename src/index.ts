@@ -25,6 +25,7 @@ const {
             await clearChannelsAndRoles()
             await initKakaoService()
         } catch(e) {
+            console.log(e)
             console.error("연결DB 파일을 제거할 수 없었습니다.")
         }
     }

@@ -5,8 +5,6 @@ import discord from "../storages/discord";
 import storage from "../storages/static";
 import { clearChannelsAndRoles, sendNotice, setOperationChannel } from "./manager";
 
-const OPERATION_CHANNEL_NAME = 'operation🎡'
-
 const login = async ({
   clearData
 } : {
@@ -25,10 +23,7 @@ const login = async ({
     console.log('초기화를 완료했습니다')
   }
   await (await getMainGuild()).fetch()
-  setOperationChannel(await ensureChannel(OPERATION_CHANNEL_NAME, {
-    parent: await ensureCategory(config.OPERATION_CATEGORY_NAME),
-    type: 'text'
-  }) as TextChannel)
+  
 };
 
 export default login;

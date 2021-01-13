@@ -8,15 +8,14 @@ import forwardToDiscord from "../kakao/forwardToDiscord"
 
 
 
-export const listenInit = () => {
+export const listenInit = async () => {
+    const operationChannel = await getOperationChannel()
     kakao.addListener('message', async (kakaoChat: Chat) => {
         forwardToDiscord(kakaoChat)
     })
-
-
-    discord.on('message', (discordChat) => {
+    discord.on('message', async (discordChat) => {
         if(discordChat.author.id === discord.user?.id) return
-        if(discordChat.channel.id === getOperationChannel().id) {
+        if(discordChat.channel.id === operationChannel.id) {
             if(listenQueue.length) return listenQueue.pop()?.(discordChat)
             return manager(discordChat)
         }

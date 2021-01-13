@@ -109,6 +109,7 @@ const authBootstrap = async (
     try {
       await initKakaoService()
     } catch(e) {
+      console.log(e)
       await chatWithDelay('카카오톡 정보를 불러오는데 문제가 발생했어요.')
     }
   } catch (e) {

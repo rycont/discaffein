@@ -1,6 +1,6 @@
 import { CategoryChannel, Guild, GuildCreateChannelOptions, TextChannel } from "discord.js";
 import discord from "../storages/discord";
-import { ChatChannel, Long } from "node-kakao";
+import { ChannelType, ChatChannel, Long } from "node-kakao";
 import DB from "../db";
 import { kakao } from "../kakao";
 import config from "../storages/config";
@@ -54,7 +54,9 @@ export const k2d = async (kakaoChannel: ChatChannel): Promise<TextChannel> => {
         if(mapped) return mapped
     }
     
-    const newDiscordChannel = await (await getMainGuild()).channels.create(kakaoChannel.getDisplayName(), {
+    const channelName = kakaoChannel.Type === ChannelType.SELFCHAT ? '나와의 채팅' : kakaoChannel.getDisplayName()
+
+    const newDiscordChannel = await (await getMainGuild()).channels.create(channelName, {
         parent: await ensureCategory(config.CHAT_CATEGORY_NAME)
     })
     // console.log(getChatCategory())
