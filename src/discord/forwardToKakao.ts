@@ -1,11 +1,8 @@
 import axios from "axios";
 import { Message, TextChannel } from "discord.js";
-import { ChatMention, ChatType, MediaTemplate, SizedMediaItemTemplate } from "node-kakao";
+import { ChatType, MediaTemplate, SizedMediaItemTemplate } from "node-kakao";
 import * as channelMapper from "../bridge/channelMapper";
-import friendMapper from "../bridge/friendMapper";
-import { chatWithDelay } from "../utils/chat";
 import { logMessage } from "../utils/console";
-import { sendNotice } from "./manager";
 
 const getTypeByExtension = (ext: string) => {
     if (["jpg", "jpeg", "gif", "bmp", "png"].includes(ext)) return ChatType.Photo
@@ -18,16 +15,8 @@ const getTypeByExtension = (ext: string) => {
 const forwardToKakao = async (chat: Message) => {
     const kakaoChannel = await channelMapper.d2k(chat.channel as TextChannel)
     if (chat.content) {
-        const mentionParsedContent = await Promise.all((JSON.parse('["' + chat.content.replace(/<@&.[0-9]*>/gi, (d) => '",' + JSON.stringify({ id: d}) + ',"') + '"]') as (string | {
-            id: string
-        })[]).map(async (e, i) => {
-            if(typeof e === 'string') return e
-            return new ChatMention((
-                (kakaoChannel.getUserInfoId((await friendMapper.d2k(chat.mentions.roles.array()[i - 1])).userId))!!
-            ))
-        }))
         try {
-            await kakaoChannel.sendText(...mentionParsedContent)
+            await kakaoChannel.sendText(chat.content)
         } catch(e) {
             await logMessage("메시지를 전송하지 못했습니다.")
         }

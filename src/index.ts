@@ -5,7 +5,7 @@ dotenv.config();
 
 import { listenInit } from "./bridge/init";
 import discordLogin from "./discord/login";
-import { clearChannelsAndRoles } from "./discord/manager";
+import { clearChannels } from "./discord/manager";
 import kakaoLogin, { initKakaoService } from "./kakao/login";
 
 const {
@@ -22,7 +22,7 @@ const {
     if(clearData) {
         try {
             await fs.unlink('./bridgemap.db')
-            await clearChannelsAndRoles()
+            await clearChannels()
             await initKakaoService()
         } catch(e) {
             console.log(e)

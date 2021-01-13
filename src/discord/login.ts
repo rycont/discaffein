@@ -1,9 +1,7 @@
-import { TextChannel } from "discord.js";
-import { ensureCategory, ensureChannel, getMainGuild } from "../bridge/channelMapper";
-import config from "../storages/config";
+import { getMainGuild } from "../bridge/channelMapper";
 import discord from "../storages/discord";
 import storage from "../storages/static";
-import { clearChannelsAndRoles, sendNotice, setOperationChannel } from "./manager";
+import { clearChannels, sendNotice, setOperationChannel } from "./manager";
 
 const login = async ({
   clearData
@@ -19,7 +17,7 @@ const login = async ({
   console.log('Logged in to Discord✌')
   if(clearData) {
     console.log('디스코드 동기화정보를 초기화중입니다')
-    await clearChannelsAndRoles()
+    await clearChannels()
     console.log('초기화를 완료했습니다')
   }
   await (await getMainGuild()).fetch()

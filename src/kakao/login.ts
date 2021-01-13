@@ -1,7 +1,6 @@
 import { promises as fs } from "fs";
 import { AuthStatusCode } from "node-kakao";
 import { k2d } from "../bridge/channelMapper";
-import friendMapper from "../bridge/friendMapper";
 import { waitForDiscordChat } from "../discord";
 import kakao from "../storages/kakao";
 import { chatWithDelay } from "../utils/chat";
@@ -84,13 +83,7 @@ export const initKakaoService = async () => {
   for (const channel of kakao.ChannelManager.getChannelList()) {
     await k2d(channel)
   }
-  await chatWithDelay('채팅방 목록을 불러왔습니다. 친구목록을 불러오는중입니다.')
-  await chatWithDelay('친구목록을 불러옵니다.')
-  for (const friend of (await kakao.Service.requestFriendList()).friends) {
-    await friendMapper.k2d(friend)
-  }
-  // await friendMapper.k2d((await kakao.Service.requestFriendList()).friends[0])
-  await chatWithDelay('친구목록을 불러왔습니다.')
+  await chatWithDelay('채팅방 목록을 불러왔습니다.')
 }
 
 const authBootstrap = async (

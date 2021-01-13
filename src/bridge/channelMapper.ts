@@ -72,7 +72,7 @@ export const d2k = async (discordChannel: TextChannel): Promise<ChatChannel> => 
         discordid: discordChannel.id
     })
     
-    if(!doc.kakaoid) throw new Error(`Cannot Find Channel Id : ${discordChannel.id}`)
+    if(!doc?.kakaoid) throw new Error(`Cannot Find Channel Id : ${discordChannel.id}`)
 
     const mapped = kakao.ChannelManager.get(Long.fromString(doc.kakaoid))
     if(!mapped) throw new Error(`Cannot Load Channel : ${discordChannel.id}`)

@@ -27,19 +27,12 @@ export const sendNotice = async (message: string) => {
     }))
 }
 
-export const clearChannelsAndRoles = async () => {
-    const { roles, channels } = (await getMainGuild())
-    roles.cache.map(async role => {
-        try {
-            await role.delete()
-        } catch (e) {
-            console.log(`Cannot delete role ${role.name}`)
-        }
-    })
+export const clearChannels = async () => {
+    const { channels } = (await getMainGuild())
     const operationChannel = await getOperationChannel()
     channels.cache.filter(channel => channel.id !== operationChannel.id).map(async channel => {
         try {
-            if (channel.type === 'text')
+            if (['text', 'category'].includes(channel.type))
                 await channel.delete()
         } catch (e) {
             console.log(`Cannot delete channel ${channel.name}`)
@@ -57,7 +50,7 @@ const createNewChatChannel = async () => {
     addCreatingGroupMemberLoop()
 }
 
-const manager = (message: Message) => {
+const manager = async (message: Message) => {
     const operation = message.content.split(' ')[0]
     if (operation === '새채팅방') {
         createNewChatChannel()
@@ -66,7 +59,9 @@ const manager = (message: Message) => {
         // chatWithDelay('')
     }
     if (operation === 'cleardata') {
-        clearChannelsAndRoles()
+        sendNotice("채널을 모두 삭제합니다")
+        await clearChannels()
+        sendNotice("채널 삭제가 완료됐습니다.")
     }
 }
 
