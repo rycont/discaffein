@@ -13,6 +13,7 @@ const forwardToDiscord = async (kakaoChat: Chat) => {
             files: [kakaoChat.RawAttachment.url]
         })
     }
+    
     const attaches = kakaoChat.AttachmentList.reduce((acc, attach) => {
         const readableAttach = attach.toJsonAttachment()
         if (attach.RequiredMessageType === ChatType.Sticker) {

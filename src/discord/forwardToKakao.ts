@@ -1,9 +1,11 @@
 import axios from "axios";
 import { Message, TextChannel } from "discord.js";
-import { ChatMention, ChatType, MediaTemplate, MediaTemplates, PhotoAttachment, SizedMediaItemTemplate } from "node-kakao";
+import { ChatMention, ChatType, MediaTemplate, SizedMediaItemTemplate } from "node-kakao";
 import * as channelMapper from "../bridge/channelMapper";
 import friendMapper from "../bridge/friendMapper";
-import { kakao } from "../kakao";
+import { chatWithDelay } from "../utils/chat";
+import { logMessage } from "../utils/console";
+import { sendNotice } from "./manager";
 
 const getTypeByExtension = (ext: string) => {
     if (["jpg", "jpeg", "gif", "bmp", "png"].includes(ext)) return ChatType.Photo
@@ -24,14 +26,12 @@ const forwardToKakao = async (chat: Message) => {
                 (kakaoChannel.getUserInfoId((await friendMapper.d2k(chat.mentions.roles.array()[i - 1])).userId))!!
             ))
         }))
-        kakaoChannel.sendText(...mentionParsedContent)
+        try {
+            await kakaoChannel.sendText(...mentionParsedContent)
+        } catch(e) {
+            await logMessage("메시지를 전송하지 못했습니다.")
+        }
     }
-    // if (chat.mentions.roles.size)
-    // chat.mentions.roles.map(async mention => {
-        // console.log(mention.id)
-        // kakaoChannel.sendText("")
-        // await friendMapper.d2k(mention)
-    // })
 
     chat.attachments.forEach(async (attach) => {
         const ext = attach.url.slice(attach.url.lastIndexOf('.') + 1)

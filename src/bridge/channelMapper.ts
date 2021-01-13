@@ -18,7 +18,6 @@ export const findChannelByName = async (name: string) => {
 let discordMainguild: Guild
 
 export const getMainGuild = async () => {
-    console.log('캐시된 서버를 반환합니다')
     if(discordMainguild) return discordMainguild
     console.log('메인 서버를 불러오는중')
     const guild = await discord.guilds.fetch(storage.discordServerId)

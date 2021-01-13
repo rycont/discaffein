@@ -1,6 +1,5 @@
 import { promises as fs } from "fs";
 import { AuthStatusCode } from "node-kakao";
-import { boolean } from "yargs";
 import { k2d } from "../bridge/channelMapper";
 import friendMapper from "../bridge/friendMapper";
 import { waitForDiscordChat } from "../discord";
@@ -105,6 +104,7 @@ const authBootstrap = async (
     await kakao.loginToken(...autologin)
     await saveAutologinToken()
     await chatWithDelay('카카오계정에 로그인했습니다✌')
+    
     if(!clearData)
     try {
       await initKakaoService()
