@@ -3,6 +3,7 @@ import { Message, TextChannel } from "discord.js";
 import { ChatMention, ChatType, MediaTemplate, MediaTemplates, PhotoAttachment, SizedMediaItemTemplate } from "node-kakao";
 import * as channelMapper from "../bridge/channelMapper";
 import friendMapper from "../bridge/friendMapper";
+import { kakao } from "../kakao";
 
 const getTypeByExtension = (ext: string) => {
     if (["jpg", "jpeg", "gif", "bmp", "png"].includes(ext)) return ChatType.Photo
@@ -24,7 +25,7 @@ const forwardToKakao = async (chat: Message) => {
                 (kakaoChannel.getUserInfoId((await friendMapper.d2k(chat.mentions.roles.array()[i - 1])).userId))!!
             ))
         }))
-        console.log(mentionParsedContent)
+        kakaoChannel.sendText(...mentionParsedContent)
     }
     // if (chat.mentions.roles.size)
     // chat.mentions.roles.map(async mention => {

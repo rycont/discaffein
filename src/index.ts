@@ -23,11 +23,11 @@ const {
         try {
             await fs.unlink('./bridgemap.db')
             await clearChannelsAndRoles()
+            await initKakaoService()
         } catch(e) {
             console.error("연결DB 파일을 제거할 수 없었습니다.")
         }
     }
-    initKakaoService()
 })()
 
 listenInit()
