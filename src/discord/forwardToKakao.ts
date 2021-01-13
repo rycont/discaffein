@@ -20,7 +20,6 @@ const forwardToKakao = async (chat: Message) => {
             id: string
         })[]).map(async (e, i) => {
             if(typeof e === 'string') return e
-            console.log(chat.mentions.roles.array(), i - 1)
             return new ChatMention((
                 (kakaoChannel.getUserInfoId((await friendMapper.d2k(chat.mentions.roles.array()[i - 1])).userId))!!
             ))
