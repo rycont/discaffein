@@ -38,18 +38,21 @@ export default {
         const exist = await DB.findOne<Bridge>({
             kakaoid: userInfo.id.toString()
         })
+        const guild = await getMainGuild()
         if (exist) {
-            const discordRole = (await getMainGuild()).roles.cache.get(exist.discordid) || await (await getMainGuild()).roles.fetch(exist.discordid)
+            const discordRole = guild.roles.cache.get(exist.discordid) || await (await getMainGuild()).roles.fetch(exist.discordid)
             if (discordRole) return discordRole
         }
         try {
             console.log('새 역할을 생성합니다 : ', userInfo.name)
-            const createdRole = await (await getMainGuild()).roles.create({
+            const createdRole = await guild.roles.create({
                 data: {
                     name: userInfo.name,
                     color: config.USER_ROLE_COLOR
-                }
+                },
+                reason: "그냥"
             })
+            console.log("역할이 생성되었습니다.")
             console.log('Document Inserted,', await DB.insert<Bridge>({
                 discordid: createdRole.id,
                 kakaoid: userInfo.id.toString()

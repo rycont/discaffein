@@ -1,6 +1,6 @@
 import axios from "axios";
 import { Message, TextChannel } from "discord.js";
-import { ChatType, MediaTemplate, MediaTemplates, PhotoAttachment, SizedMediaItemTemplate } from "node-kakao";
+import { ChatMention, ChatType, MediaTemplate, MediaTemplates, PhotoAttachment, SizedMediaItemTemplate } from "node-kakao";
 import * as channelMapper from "../bridge/channelMapper";
 import friendMapper from "../bridge/friendMapper";
 
@@ -14,11 +14,24 @@ const getTypeByExtension = (ext: string) => {
 
 const forwardToKakao = async (chat: Message) => {
     const kakaoChannel = await channelMapper.d2k(chat.channel as TextChannel)
-    if (chat.content) kakaoChannel?.sendText(chat.content)
-
-    chat.mentions.roles.map(async mention => {
-        console.log(await friendMapper.d2k(mention))
-    })
+    if (chat.content) {
+        const mentionParsedContent = await Promise.all((JSON.parse('["' + chat.content.replace(/<@&.[0-9]*>/gi, (d) => '",' + JSON.stringify({ id: d}) + ',"') + '"]') as (string | {
+            id: string
+        })[]).map(async (e, i) => {
+            if(typeof e === 'string') return e
+            console.log(chat.mentions.roles.array(), i - 1)
+            return new ChatMention((
+                (kakaoChannel.getUserInfoId((await friendMapper.d2k(chat.mentions.roles.array()[i - 1])).userId))!!
+            ))
+        }))
+        console.log(mentionParsedContent)
+    }
+    // if (chat.mentions.roles.size)
+    // chat.mentions.roles.map(async mention => {
+        // console.log(mention.id)
+        // kakaoChannel.sendText("")
+        // await friendMapper.d2k(mention)
+    // })
 
     chat.attachments.forEach(async (attach) => {
         const ext = attach.url.slice(attach.url.lastIndexOf('.') + 1)

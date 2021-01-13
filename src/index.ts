@@ -5,7 +5,8 @@ dotenv.config();
 
 import { listenInit } from "./bridge/init";
 import discordLogin from "./discord/login";
-import kakaoLogin from "./kakao/login";
+import { clearChannelsAndRoles } from "./discord/manager";
+import kakaoLogin, { initKakaoService } from "./kakao/login";
 
 const {
     clearData
@@ -14,17 +15,19 @@ const {
 };
 
 (async () => {
+    await discordLogin({
+        clearData
+    })
+    await kakaoLogin(clearData)
     if(clearData) {
         try {
             await fs.unlink('./bridgemap.db')
+            await clearChannelsAndRoles()
         } catch(e) {
             console.error("연결DB 파일을 제거할 수 없었습니다.")
         }
     }
-    await discordLogin({
-        clearData
-    })
-    await kakaoLogin()
+    initKakaoService()
 })()
 
 listenInit()

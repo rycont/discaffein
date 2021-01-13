@@ -1,5 +1,6 @@
 import { promises as fs } from "fs";
 import { AuthStatusCode } from "node-kakao";
+import { boolean } from "yargs";
 import { k2d } from "../bridge/channelMapper";
 import friendMapper from "../bridge/friendMapper";
 import { waitForDiscordChat } from "../discord";
@@ -79,7 +80,7 @@ const kakaoOnboard = async () => {
   await loginLoop()
 }
 
-const initKakaoService = async () => {
+export const initKakaoService = async () => {
   await chatWithDelay('채팅방 목록을 불러오는중입니다')
   for (const channel of kakao.ChannelManager.getChannelList()) {
     await k2d(channel)
@@ -89,11 +90,13 @@ const initKakaoService = async () => {
   for (const friend of (await kakao.Service.requestFriendList()).friends) {
     await friendMapper.k2d(friend)
   }
-  // ;friendMapper.k2d((await kakao.Service.requestFriendList()).friends[0])
+  // await friendMapper.k2d((await kakao.Service.requestFriendList()).friends[0])
   await chatWithDelay('친구목록을 불러왔습니다.')
 }
 
-const authBootstrap = async () => {
+const authBootstrap = async (
+  clearData?: boolean
+) => {
   try {
     const autologin = await getAutologin()
     if(!autologin) {
@@ -102,6 +105,7 @@ const authBootstrap = async () => {
     await kakao.loginToken(...autologin)
     await saveAutologinToken()
     await chatWithDelay('카카오계정에 로그인했습니다✌')
+    if(!clearData)
     try {
       await initKakaoService()
     } catch(e) {

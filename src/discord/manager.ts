@@ -26,7 +26,7 @@ export const clearChannelsAndRoles = async () => {
             console.log(`Cannot delete role ${role.name}`)
         }
     })
-    channels.cache.map(async channel => {
+    channels.cache.filter(channel => channel.id !== operationChannel.id).map(async channel => {
         try {
             if(channel.type === 'text')
                 await channel.delete()
@@ -38,20 +38,6 @@ export const clearChannelsAndRoles = async () => {
 
 const addCreatingGroupMemberLoop = async (cachedFriends?: FriendListStruct) => {
     await chatWithDelay('@을 눌러서 초대할 친구를 언급해주세요.')
-    // const name = (await waitForDiscordChat()).mentions.roles.
-
-    // const { friends } = cachedFriends || await kakao.Service.requestFriendList()
-    
-    // await sendEmbed(false, ...friends
-    //     .filter(friend => friend.friendNickName.includes(name) || friend.nickName.includes(name))
-    //     .map((friend, index) => new MessageEmbed(({
-    //         author: {
-    //             iconURL: friend.originalProfileImageUrl,
-    //             name: `${index + 1}) ${friend.friendNickName || friend.nickName}`,
-    //         },
-    //         description: friend.statusMessage
-    //     }))))
-
     chatWithDelay('초대할 친구의 번호를 입력해주세요. 띄어쓰기로 구분해주세요.')
 }
 
