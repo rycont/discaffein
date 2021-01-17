@@ -1,7 +1,9 @@
 import { getMainGuild } from "../bridge/channelMapper";
 import discord from "../storages/discord";
 import storage from "../storages/static";
-import { clearChannels, sendNotice, setOperationChannel } from "./manager";
+import { chatWithDelay } from "../utils/chat";
+import { logMessage } from "../utils/console";
+import { clearChannels } from "./manager";
 
 const login = async ({
   clearData
@@ -14,11 +16,11 @@ const login = async ({
     throw new Error(`Cannot log in to Discord, Discord Says : "${e.message}"`)
   }
 
-  console.log('Logged in to Discord✌')
+  logMessage('디스코드에 로그인했습니다✌')
   if(clearData) {
-    console.log('디스코드 동기화정보를 초기화중입니다')
+    logMessage('동기화정보를 초기화중입니다')
     await clearChannels()
-    console.log('초기화를 완료했습니다')
+    logMessage('초기화를 완료했습니다')
   }
   await (await getMainGuild()).fetch()
   

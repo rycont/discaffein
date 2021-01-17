@@ -18,7 +18,6 @@ const {
     await discordLogin({
         clearData
     })
-    await kakaoLogin(clearData)
     if(clearData) {
         try {
             await fs.unlink('./bridgemap.db')
@@ -29,6 +28,7 @@ const {
             console.error("연결DB 파일을 제거할 수 없었습니다.")
         }
     }
+    await listenInit()
+    await kakaoLogin(clearData)
 })()
 
-listenInit()

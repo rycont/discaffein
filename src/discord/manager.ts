@@ -1,21 +1,15 @@
 import { Message, MessageEmbed, TextChannel } from "discord.js"
 import { FriendListStruct } from "node-kakao"
-import { ensureCategory, ensureChannel, getMainGuild } from "../bridge/channelMapper"
-import config from "../storages/config"
-import { chatWithDelay, sendEmbed } from "../utils/chat"
+import { waitForDiscordChat } from "."
+import { getMainGuild } from "../bridge/channelMapper"
+import { kakao } from "../kakao"
+import { promises as fs } from "fs";
+import storage from "../storages/static"
+import { chatWithDelay } from "../utils/chat"
 
-let operationChannel: TextChannel
-const OPERATION_CHANNEL_NAME = 'operation🎡'
-
-export const setOperationChannel = (_channel: TextChannel) => {
-    // console.log(_channel)
-    operationChannel = _channel
-}
 export const getOperationChannel = async () => {
-    return await ensureChannel(OPERATION_CHANNEL_NAME, {
-        parent: await ensureCategory(config.OPERATION_CATEGORY_NAME),
-        type: 'text'
-    }) as TextChannel
+    const mainGuild = await getMainGuild()
+    return (mainGuild.channels.cache.find(channel => channel.id === storage.operationChannelId) || mainGuild.channels.resolve(storage.operationChannelId)) as TextChannel
 }
 
 export const sendNotice = async (message: string) => {
@@ -41,8 +35,10 @@ export const clearChannels = async () => {
 }
 
 const addCreatingGroupMemberLoop = async (cachedFriends?: FriendListStruct) => {
-    await chatWithDelay('@을 눌러서 초대할 친구를 언급해주세요.')
-    chatWithDelay('초대할 친구의 번호를 입력해주세요. 띄어쓰기로 구분해주세요.')
+    await chatWithDelay('초대할 친구의 이름을 알려주세요.')
+    const chat = await waitForDiscordChat()
+    console.log(chat.content)
+    console.log(await kakao.Service.searchFriends(chat.content))
 }
 
 const createNewChatChannel = async () => {
@@ -61,6 +57,7 @@ const manager = async (message: Message) => {
     if (operation === 'cleardata') {
         sendNotice("채널을 모두 삭제합니다")
         await clearChannels()
+        await fs.unlink('./bridgemap.db')
         sendNotice("채널 삭제가 완료됐습니다.")
     }
 }

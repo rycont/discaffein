@@ -24,27 +24,27 @@
 # How to use
 nodejs, npm이 사전에 설치되어있어야 합니다.
 
-1. 새 서버를 하나 생성하고, 봇을 그 서버에 초대해주세요. 봇은 하나의 서버에만 소속되어있어야 합니다. (권장권한 52240)
+1. 새 디스코드 서버와 봇을 하나 생성하고, 봇을 그 서버에 초대해주세요. 봇은 하나의 서버에만 소속되어있어야 합니다. 권한은 52304를 권장합니다. 
 초대 방법 : https://discord.com/oauth2/authorize?scope=bot&permissions=권한&client_id=CLIENT_ID
-2. 이 저장소를 클론하고, npm 의존성을 설치해주세요
+2. 서버에 봇 조작을 위한 텍스트채널을 하나 생성해주세요.
+3. 저장소를 클론하고, npm 의존성을 설치해주세요
 ```bash
 git clone https://github.com/rycont/discaffein
 cd discaffein
 npm i
 # or `yarn`
 ```
-3. 아래의 정보로 `.env` 파일을 생성해주세요.
-```
-uuid=discaffein
-name=DisCaffein
+4. 아래의 정보로 `.env` 파일을 생성해주세요.
+```env
 botToken=디스코드 봇 토큰
+operationChannelId=조작에 사용할 채널 ID
 ```
-4. 서버를 실행해주세요.
-```
+5. 서버를 실행해주세요.
+```bash
 npm run run
 # or `yarn run run`
 ```
-4. 디스코드에 안내되는 내용대로, 카카오계정에 로그인해주세요.
+6. 디스코드에 안내되는 내용대로, 카카오계정에 로그인해주세요.
 
 # Credit
 Made by [RyCont](https://github.com/rycont)

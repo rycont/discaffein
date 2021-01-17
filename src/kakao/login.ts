@@ -20,7 +20,7 @@ const getAutologin = async (): Promise<[string, string] | null> => {
   }
 }
 
-const errorMessageTable =  
+const errorMessageTable =
   ({
     [AuthStatusCode.DEVICE_NOT_REGISTERED]: '등록되지 않은 디바이스입니다.',
     [AuthStatusCode.ACCOUNT_RESTRICTED]: '계정이 정지되었습니다.',
@@ -43,7 +43,7 @@ const passcodeLoop = async (email: string, password: string) => {
   try {
     await kakao.Auth.registerDevice(passcode, email, password, true)
     await chatWithDelay('인증이 완료되었어요👌')
-  } catch(e) {
+  } catch (e) {
     await chatWithDelay('올바르지 않은 인증번호에요😢')
     await passcodeLoop(email, password)
   }
@@ -51,22 +51,24 @@ const passcodeLoop = async (email: string, password: string) => {
 
 const loginLoop = async (isNotFirstAttempt?: boolean) => {
   await chatWithDelay(`${isNotFirstAttempt ? "" : "먼저, 카카오계정에 로그인할 수 있는 "}이메일을 알려주세요.`)
-  
+
   const email = (await waitForDiscordChat()).content
-  
-  await chatWithDelay(`${isNotFirstAttempt ? "" : "좋은 이메일이에요! 이제 "}비밀번호를 알려주세요.`)
+
+  await chatWithDelay(`${isNotFirstAttempt ? "" : "좋은 이메일이에요! 이제 "}비밀번호를 알려주세요.
+비밀번호는 직접 저장되지 않고, 로그인에 성공했을때만 안전하게 암호화해서 보관해요.`)
   const password = (await waitForDiscordChat()).content
   await chatWithDelay(`로그인을 시도하고있어요.`)
-  
+
   try {
     await kakao.login(email, password)
     await chatWithDelay(`반가워요 ${kakao.ClientUser.MainUserInfo.Nickname}님🖐 카카오계정에 로그인되었어요.`)
     await saveAutologinToken()
-    await chatWithDelay(`로그인 정보가 저장되었습니다`)
-  } catch(e) {
-    if(e.status === AuthStatusCode.DEVICE_NOT_REGISTERED) await passcodeLoop(email, password)
-    if(e.status === AuthStatusCode.LOGIN_FAILED) await chatWithDelay('이메일과 일치하는 계정을 찾을 수 없어요.')
-    if(e.status === AuthStatusCode.LOGIN_FAILED_REASON) await chatWithDelay('비밀번호가 일치하지 않아요.')
+    await chatWithDelay(`로그인 정보가 저장되었습니다.
+서버가 있는 위치의 auth.json 파일에 다른 사람이 접근할 수 없도록 조심하세요! auth파일을 통해 다른 사람이 로그인할 수 있습니다.`)
+  } catch (e) {
+    if (e.status === AuthStatusCode.DEVICE_NOT_REGISTERED) await passcodeLoop(email, password)
+    if (e.status === AuthStatusCode.LOGIN_FAILED) await chatWithDelay('이메일과 일치하는 계정을 찾을 수 없어요.')
+    if (e.status === AuthStatusCode.LOGIN_FAILED_REASON) await chatWithDelay('비밀번호가 일치하지 않아요.')
     else await chatWithDelay('카카오계정 로그인에 실패했어요😢', errorMessageTable[e.status as AuthStatusCode])
     await loginLoop(true)
   }
@@ -91,22 +93,24 @@ const authBootstrap = async (
 ) => {
   try {
     const autologin = await getAutologin()
-    if(!autologin) {
-      return await kakaoOnboard()
+    if (!autologin) {
+      await kakaoOnboard()
     }
-    await kakao.loginToken(...autologin)
-    await saveAutologinToken()
-    await chatWithDelay('카카오계정에 로그인했습니다✌')
-    
-    if(!clearData)
-    try {
-      await initKakaoService()
-    } catch(e) {
-      console.log(e)
-      await chatWithDelay('카카오톡 정보를 불러오는데 문제가 발생했어요.')
+    else {
+      await kakao.loginToken(...autologin)
+      await saveAutologinToken()
+      await chatWithDelay('카카오계정에 로그인했습니다✌')
     }
+
+    if (!clearData)
+      try {
+        await initKakaoService()
+      } catch (e) {
+        console.log(e)
+        await chatWithDelay('카카오톡 정보를 불러오는데 문제가 발생했어요.')
+      }
   } catch (e) {
-    if([AuthStatusCode.DEVICE_NOT_REGISTERED, -910].includes(e.status)) {
+    if ([AuthStatusCode.DEVICE_NOT_REGISTERED, -910].includes(e.status)) {
       await chatWithDelay('계정 등록이 만료되었어요.')
       return await loginLoop()
     }
